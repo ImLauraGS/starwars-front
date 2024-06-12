@@ -7,25 +7,9 @@ import {
     Typography,
     Spinner,
 } from "@material-tailwind/react";
-import { fetchFilms, setFilmsLoading, clearFilms } from '../store/starships/starshipSlice';
 
-export default function Films({ starship }) {
-    const dispatch = useAppDispatch();
-    const { films, filmsLoading, error } = useAppSelector(state => state.starships);
 
-    useEffect(() => {
-        dispatch(clearFilms());
-
-        if (starship.films && starship.films.length > 0) {
-            if (starship.films) {
-                dispatch(setFilmsLoading(true));
-                starship.films.forEach(url => {
-                    dispatch(fetchFilms(url));
-                });
-                dispatch(setFilmsLoading(false));
-            }
-        }
-    }, [starship.films, dispatch]);
+export default function Films({ films, filmsLoading, error  }) {
 
     return (
         <>
@@ -37,7 +21,7 @@ export default function Films({ starship }) {
                     <div className="text-center w-full">No films found for this starship.</div>
                 )}
                 {films.map((film, index) => {
-                    const filmId = film.url.split('/').filter(Boolean).pop();
+                    const filmId = film.split('/').filter(Boolean).pop();
                     return (
                         <Card key={index} className="mt-6 rounded-xl">
                             <CardHeader color="blue-gray" className="relative h-56">

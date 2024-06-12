@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../hooks/store';
+import React from 'react';
 import {
     Card,
     CardHeader,
@@ -7,26 +6,8 @@ import {
     Typography,
     Spinner,
 } from "@material-tailwind/react";
-import { fetchPilots, setPilotsLoading, clearPilots } from '../store/starships/starshipSlice';
 
-const Pilots = ({ starship }) => {
-    const dispatch = useAppDispatch();
-    const { pilots, pilotsLoading, error } = useAppSelector(state => state.starships);
-
-    useEffect(() => {
-        dispatch(clearPilots());
-
-        if (starship.pilots && starship.pilots.length > 0) {
-            if (starship.pilots) {
-                dispatch(setPilotsLoading(true));
-                starship.pilots.forEach(url => {
-                    dispatch(fetchPilots(url));
-                });
-                dispatch(setPilotsLoading(false));
-            }
-        }
-    }, [starship.pilots, dispatch]);
-    
+const Pilots = ({ pilots, pilotsLoading, error }) => {
     return (
         <>
             <h2 className='w-full border-y p-3 text-xl'>PILOTS</h2>
@@ -37,7 +18,7 @@ const Pilots = ({ starship }) => {
                     <div className="text-center w-full">No pilots found for this starship.</div>
                 )}
                 {pilots.map((pilot, index) => {
-                    const pilotId = pilot.url.split('/').filter(Boolean).pop();
+                    const pilotId = pilot.split('/').filter(Boolean).pop();
                     return (
                         <Card key={index} className="mt-6 rounded-xl">
                             <CardHeader color="blue-gray" className="relative h-56">

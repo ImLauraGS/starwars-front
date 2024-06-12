@@ -1,9 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../hooks/store';
 import {
     fetchStarshipDetails,
     fetchStarshipImg,
+    fetchPilots,
+    fetchFilms,
+    setPilotsLoading,
+    setFilmsLoading,
     clearPilots,
     clearFilms,
 } from '../store/starships/starshipSlice';
@@ -17,8 +21,10 @@ import Films from '../components/Films';
 const Details = () => {
     const { id } = useParams();
     const dispatch = useAppDispatch();
-    const { starship, images, loading } = useAppSelector(state => state.starships);
+    const { starship, images, loading, pilotsLoading, filmsLoading, error } = useAppSelector(state => state.starships);
     const navigate = useNavigate();
+    const [pilotsFetched, setPilotsFetched] = useState(false);
+    const [filmsFetched, setFilmsFetched] = useState(false);
 
     useEffect(() => {
         const userData = JSON.parse(localStorage.getItem('user'));
@@ -35,6 +41,28 @@ const Details = () => {
             dispatch(fetchStarshipImg(id));
         }
     }, [dispatch, id]);
+
+    useEffect(() => {
+        if (starship && starship.pilots && !pilotsFetched) {
+            dispatch(setPilotsLoading(true));
+            starship.pilots.forEach(url => {
+                dispatch(fetchPilots(url));
+            });
+            dispatch(setPilotsLoading(false));
+            setPilotsFetched(true);
+        }
+    }, [dispatch, starship, pilotsFetched]);
+
+    useEffect(() => {
+        if (starship && starship.films && !filmsFetched) {
+            dispatch(setFilmsLoading(true));
+            starship.films.forEach(url => {
+                dispatch(fetchFilms(url));
+            });
+            dispatch(setFilmsLoading(false));
+            setFilmsFetched(true);
+        }
+    }, [dispatch, starship, filmsFetched]);
 
     const imageUrl = images[id] || '/big-placeholder.jpg';
 
@@ -67,8 +95,8 @@ const Details = () => {
                 </section>
                 {starship && (
                     <>
-                        <Pilots starship={starship} />
-                        <Films starship={starship} />
+                        <Pilots pilots={starship.pilots} pilotsLoading={pilotsLoading} error={error} />
+                        <Films films={starship.films} filmsLoading={filmsLoading} error={error} />
                     </>
                 )}
             </main>

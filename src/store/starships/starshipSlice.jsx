@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { starshipsApi, starshipsImgApi, peopleApi, filmsApi } from '../../services/starshipsService'
-
+import { starshipsApi, starshipsImgApi, peopleApi, filmsApi } from '../../services/starshipsService';
 
 const api = starshipsApi();
 const imgApi = starshipsImgApi();
@@ -48,12 +47,8 @@ export const fetchStarshipImg = createAsyncThunk(
 
 export const fetchPilots = createAsyncThunk(
     'starships/fetchPilots',
-    async (url, { rejectWithValue, getState }) => {
+    async (url, { rejectWithValue }) => {
         try {
-            const { pilots } = getState().starships;
-            if (pilots.length > 0) {
-                dispatch(clearPilots());
-            }
             const response = await peopleApiService.getPilot(url);
             return response.data;
         } catch (error) {
@@ -64,12 +59,8 @@ export const fetchPilots = createAsyncThunk(
 
 export const fetchFilms = createAsyncThunk(
     'starships/fetchFilms',
-    async (url, { rejectWithValue, getState }) => {
+    async (url, { rejectWithValue }) => {
         try {
-            const { films } = getState().starships;
-            if (films.length > 0) {
-                dispatch(clearFilms());
-            }
             const response = await filmsApiService.getFilm(url);
             return response.data;
         } catch (error) {
@@ -137,55 +128,55 @@ const starshipsSlice = createSlice({
             state.error = action.payload || action.error.message;
             state.hasMore = false;
         })
-            .addCase(fetchStarshipDetails.pending, (state) => {
-                state.starshipsLoading = true;
-                state.error = null;
-                state.starship = null;
-            })
-            .addCase(fetchStarshipDetails.fulfilled, (state, action) => {
-                state.starshipsLoading = false;
-                state.starship = action.payload;
-            })
-            .addCase(fetchStarshipDetails.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload || action.error.message;
-            })
-            .addCase(fetchStarshipImg.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchStarshipImg.fulfilled, (state, action) => {
-                state.loading = false;
-                state.images[action.payload.id] = action.payload.imgUrl;
-            })
-            .addCase(fetchStarshipImg.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload || action.error.message;
-            })
-            .addCase(fetchPilots.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchPilots.fulfilled, (state, action) => {
-                state.pilotsLoading = false;
-                state.pilots = [...state.pilots, action.payload];
-            })
-            .addCase(fetchPilots.rejected, (state, action) => {
-                state.pilotsLoading = false;
-                state.error = action.payload || action.error.message;
-            })
-            .addCase(fetchFilms.pending, (state) => {
-                state.filmsLoading = true;
-                state.error = null;
-            })
-            .addCase(fetchFilms.fulfilled, (state, action) => {
-                state.filmsLoading = false;
-                state.films = [...state.films, action.payload];
-            })
-            .addCase(fetchFilms.rejected, (state, action) => {
-                state.filmsLoading = false;
-                state.error = action.payload || action.error.message;
-            });
+        .addCase(fetchStarshipDetails.pending, (state) => {
+            state.starshipDetailsLoading = true;
+            state.error = null;
+            state.starship = null;
+        })
+        .addCase(fetchStarshipDetails.fulfilled, (state, action) => {
+            state.starshipDetailsLoading = false;
+            state.starship = action.payload;
+        })
+        .addCase(fetchStarshipDetails.rejected, (state, action) => {
+            state.starshipDetailsLoading = false;
+            state.error = action.payload || action.error.message;
+        })
+        .addCase(fetchStarshipImg.pending, (state) => {
+            state.starshipImgLoading = true;
+            state.error = null;
+        })
+        .addCase(fetchStarshipImg.fulfilled, (state, action) => {
+            state.starshipImgLoading = false;
+            state.images[action.payload.id] = action.payload.imgUrl;
+        })
+        .addCase(fetchStarshipImg.rejected, (state, action) => {
+            state.starshipImgLoading = false;
+            state.error = action.payload || action.error.message;
+        })
+        .addCase(fetchPilots.pending, (state) => {
+            state.pilotsLoading = true;
+            state.error = null;
+        })
+        .addCase(fetchPilots.fulfilled, (state, action) => {
+            state.pilotsLoading = false;
+            state.pilots = [...state.pilots, action.payload];
+        })
+        .addCase(fetchPilots.rejected, (state, action) => {
+            state.pilotsLoading = false;
+            state.error = action.payload || action.error.message;
+        })
+        .addCase(fetchFilms.pending, (state) => {
+            state.filmsLoading = true;
+            state.error = null;
+        })
+        .addCase(fetchFilms.fulfilled, (state, action) => {
+            state.filmsLoading = false;
+            state.films = [...state.films, action.payload];
+        })
+        .addCase(fetchFilms.rejected, (state, action) => {
+            state.filmsLoading = false;
+            state.error = action.payload || action.error.message;
+        });
     }
 });
 
